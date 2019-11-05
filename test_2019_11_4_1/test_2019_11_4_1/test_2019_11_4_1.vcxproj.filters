@@ -26,5 +26,8 @@
     <ClInclude Include="Map.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="Set.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

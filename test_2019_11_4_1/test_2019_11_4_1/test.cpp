@@ -1,6 +1,8 @@
 #include "Map.hpp"
+#include "Set.hpp"
 int main()
 {
-	TestMap();
+	//TestMap();
+	TestSet();
 	return 0;
 }

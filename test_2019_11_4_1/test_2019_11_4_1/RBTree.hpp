@@ -276,6 +276,7 @@ public:
 	void Clear()
 	{
 		_Destroy(GetRoot());//从根开始销毁
+		_size = 0;
 	}
 
 	//红黑树的验证
