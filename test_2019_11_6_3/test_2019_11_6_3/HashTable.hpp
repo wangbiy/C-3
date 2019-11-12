@@ -34,7 +34,7 @@ public:
 		//通过哈希函数计算元素在哈希表中的存储位置
 		size_t HashAddr = HashFunc(val);
 		//检测该位置是否可以插入元素
-		//发生哈希冲突，使用线性探测来解决
+		//发生哈希冲突，使用二次探测来解决
 		while (_ht[HashAddr]._state != EMPTY)
 		{
 			if (EXIST == _ht[HashAddr]._state && val == _ht[HashAddr]._value)
@@ -42,7 +42,7 @@ public:
 				//就不用插入了，冲突
 				return false;
 			}
-			//使用线性探测继续往后找，直到找到空位
+		  //使用线性探测
 			++HashAddr;
 			if (HashAddr == _ht.capacity())
 				HashAddr = 0;//如果找到最后一个还没有找到空位，从头开始
@@ -64,10 +64,10 @@ public:
 			{
 				return HashAddr;
 			}
-			//如果这个位置是删除或者不等于要找的值，就哈希冲突，线性探测
-			HashAddr++;
+			//使用线性探测
+			++HashAddr;
 			if (HashAddr == _ht.capacity())
-				HashAddr = 0;
+				HashAddr = 0;//如果找到最后一个还没有找到空位，从头开始
 		}
 		return -1;//没有这个元素
 	}
@@ -95,7 +95,7 @@ private:
 	void CheckCapacity()
 	{
 		//有效元素与容量的比率称为负载因子，因为_size/_ht.capacity()永远是0，因为都是整形，所以给_size乘10/容量>7即可
-		if (_size*10 / _ht.capacity() >= 7)//需要扩容
+		if (_size * 10 / _ht.capacity() >= 7)//需要扩容
 		{
 			//无法使用原来的哪种方法扩容，因为现在哈希函数是val%容量,扩容使容量发生改变，哈希函数也就会变化，
 			//如果采用原来的方法将元素进行搬移，可能导致元素找不到了，因此要重新找一种方法来扩容
