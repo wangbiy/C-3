@@ -29,6 +29,7 @@ public:
 	bool Insert(const T& val)
 	{
 		//检测是否需要扩容
+		CheckCapacity();
 
 		//通过哈希函数计算元素在哈希表中的存储位置
 		size_t HashAddr = HashFunc(val);
@@ -81,10 +82,35 @@ public:
 		}
 		return false;
 	}
+	void Swap(HashTable<T>& ht)
+	{
+		_ht.swap(ht._ht);//先交换内容
+		swap(_size, ht._size);
+	}
 private:
 	size_t HashFunc(const T& val)
 	{
 		return val%_ht.capacity();
+	}
+	void CheckCapacity()
+	{
+		//有效元素与容量的比率称为负载因子，因为_size/_ht.capacity()永远是0，因为都是整形，所以给_size乘10/容量>7即可
+		if (_size*10 / _ht.capacity() >= 7)//需要扩容
+		{
+			//无法使用原来的哪种方法扩容，因为现在哈希函数是val%容量,扩容使容量发生改变，哈希函数也就会变化，
+			//如果采用原来的方法将元素进行搬移，可能导致元素找不到了，因此要重新找一种方法来扩容
+			//涉及两个问题：元素怎么搬移和搬移哪些元素（只搬移状态为存在的元素）
+			//（1）构造新的哈希表，将容量给为新容量（这里是原容量的2倍）
+			HashTable<T> newHT(_ht.capacity() * 2);
+			//（2）将原哈希表中状态为存在的元素插入到新的哈希表中
+			for (size_t i = 0; i < _ht.capacity(); ++i)
+			{
+				if (_ht[i]._state == EXIST)
+					newHT.Insert(_ht[i]._value);
+			}
+			//（3）交换两个哈希表
+			Swap(newHT);
+		}
 	}
 private:
 	std::vector<Elem<T>> _ht;
@@ -97,8 +123,11 @@ void TesthashTable()
 	ht.Insert(7);
 	ht.Insert(8);
 	ht.Insert(27);
+	ht.Insert(9);
+	ht.Insert(5);
+	ht.Insert(3);
+	ht.Insert(1);
 
 	ht.Erase(2);
 	ht.Erase(8);
-
 }
