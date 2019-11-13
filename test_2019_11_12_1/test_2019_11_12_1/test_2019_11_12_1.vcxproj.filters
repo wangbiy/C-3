@@ -15,14 +15,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HashTable.hpp">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="HashBucket.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Unordered_map.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Unordered_set.hpp">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
