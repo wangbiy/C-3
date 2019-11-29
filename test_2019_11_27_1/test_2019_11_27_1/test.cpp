@@ -50,6 +50,7 @@ int main()
 	});
 }
 #endif 
+#if 0
 int main()
 {
 	int a = 10;
@@ -66,5 +67,65 @@ int main()
 		c=left + right; 
 	};
 	Add(1, 2);
+	return 0;
+}
+#endif
+#if 0
+int main()
+{
+	int a = 10;
+	int b = 20;
+	int c = 0;
+	cout << &a << endl;
+	cout << &b << endl;
+	cout << &c << endl;
+	auto Add = [=,&a,&b](const int left, const int right)mutable
+	{
+		cout << &a << endl;
+		cout << &b << endl;
+		cout << &c << endl;
+		c = left + right;
+	};
+	Add(1, 2);
+	return 0;
+}
+#endif
+#if 0
+void(*PF)();//函数指针
+int main()
+{
+	auto f1 = []{cout << "hello world" << endl; };
+	auto f2 = []{cout << "hello world" << endl; };
+	f1 = f2;//编译报错，找不到operator=()
+
+	auto f3(f2);//允许一个lambda不表达式拷贝一个副本
+	f3();
+	PF = f2;//可以将lambda表达式赋值给想通过类型的函数指针
+	PF();
+	return 0;
+}
+#endif
+class Rate
+{
+public:
+	Rate(double rate) : _rate(rate)
+	{}
+	double operator()(double money, int year)//仿函数类
+	{
+		return money * _rate * year;
+	}
+private:
+	double _rate;
+};
+int main()
+{
+	//创建函数对象
+	double rate = 0.49;
+	Rate r1(rate);
+	//以仿函数方式调用
+	r1(10000, 2);
+	//lambda表达式
+	auto r2 = [=](double money, int year)->double{return money*rate*year;};
+	r2(10000, 2);
 	return 0;
 }
