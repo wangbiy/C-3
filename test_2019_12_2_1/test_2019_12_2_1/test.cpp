@@ -186,6 +186,7 @@ int main()
 	return 0;
 }
 #endif
+#if 0
 class Person
 {
 public:
@@ -227,5 +228,92 @@ Person GetTempPerson()
 int main()
 {
 	Person p(GetTempPerson());
+	return 0;
+}
+#endif
+#if 0
+void Fun(int &x)//左值引用
+{ 
+	cout << "lvalue ref" << endl; 
+}
+void Fun(int &&x)//右值引用
+{ 
+	cout << "rvalue ref" << endl;
+}
+void Fun(const int &x)//const类型的左值引用
+{ 
+	cout << "const lvalue ref" << endl; 
+}
+void Fun(const int &&x)//const类型的右值引用
+{ 
+	cout << "const rvalue ref" << endl; 
+}
+template<class T>
+void PerfectForward(T &&t)
+{ 
+	Fun(t); 
+}
+int main()
+{
+	PerfectForward(10);//应该调用右值引用 
+
+	int a;
+	PerfectForward(a); //应该调用左值引用
+	PerfectForward(std::move(a)); //应该调用右值引用
+
+	const int b = 8;
+	PerfectForward(b);//应该调用const类型的左值引用 
+	PerfectForward(std::move(b)); //应该调用const类型的右值引用
+
+	return 0;
+}
+#endif
+#if 0
+void Fun(int &x)//左值引用
+{
+	cout << "lvalue ref" << endl;
+}
+void Fun(int &&x)//右值引用
+{
+	cout << "rvalue ref" << endl;
+}
+void Fun(const int &x)//const类型的左值引用
+{
+	cout << "const lvalue ref" << endl;
+}
+void Fun(const int &&x)//const类型的右值引用
+{
+	cout << "const rvalue ref" << endl;
+}
+template<class T>
+void PerfectForward(T &&t)
+{
+	Fun(forward<T>(t));
+}
+int main()
+{
+	PerfectForward(10);//应该调用右值引用 
+
+	int a;
+	PerfectForward(a); //应该调用左值引用
+	PerfectForward(std::move(a)); //应该调用右值引用
+
+	const int b = 8;
+	PerfectForward(b);//应该调用const类型的左值引用 
+	PerfectForward(std::move(b)); //应该调用const类型的右值引用
+
+	return 0;
+}
+#endif
+#include <thread>
+void threadFunc1()
+{
+	cout << "A new thread!" << " "<< 100 << endl;
+}
+int main()
+{
+	thread t1(threadFunc1);
+	t1.join();
+	cout << "Main thread end!" << endl;
 	return 0;
 }
