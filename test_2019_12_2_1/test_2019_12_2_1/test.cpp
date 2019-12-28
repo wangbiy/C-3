@@ -306,14 +306,184 @@ int main()
 }
 #endif
 #include <thread>
-void threadFunc1()
+#if 0
+void threadFunc(int a)
 {
-	cout << "A new thread!" << " "<< 100 << endl;
+	cout << "thread1:" << a << endl;
 }
+class TF
+{
+	void operator()()
+	{
+		cout << "thread2" << endl;
+	}
+};
 int main()
 {
-	thread t1(threadFunc1);
+	thread t1(threadFunc, 10);//线程函数为函数指针
+	TF t;
+	thread t2(t);//线程函数为函数对象
+	thread t3([]{
+		cout << "thread3" << endl;
+	});//线程函数为lambda表达式
 	t1.join();
+	t2.join();
+	t3.join();
 	cout << "Main thread end!" << endl;
 	return 0;
 }
+#endif
+#if 0
+void ThreadFunc1(int& x) 
+{ 
+	x += 10;
+}
+void ThreadFunc2(int* x) 
+{ 
+	*x += 10; 
+}
+int main() 
+{ 
+	int a = 10; 
+	//在线程函数中对a修改，不会影响外部实参，因为线程函数参数虽然是引用方式，但其实际引用的是线程栈中的拷贝 
+	thread t1(ThreadFunc1, a);
+	t1.join(); 
+	cout << a << endl; 
+	//如果想要通过形参改变外部实参时，必须借助std::ref()函数 
+	thread t2(ThreadFunc1, std::ref(a));
+	t2.join(); 
+	cout << a << endl; // 地址的拷贝 
+	thread t3(ThreadFunc2, &a); 
+	t3.join(); 
+	cout << a << endl; 
+	return 0; 
+}
+#endif
+#if 0
+void ThreadFunc() 
+{ 
+	cout << "ThreadFunc()" << endl; 
+} 
+bool DoSomething() 
+{ 
+	return false; 
+} 
+int main() 
+{ 
+	thread t(ThreadFunc); 
+	if (!DoSomething()) 
+		return -1; 
+	t.join(); 
+	return 0; 
+}
+#endif
+#if 0
+void ThreadFunc() 
+{ 
+	cout << "ThreadFunc()" << endl; 
+} 
+void Test1() 
+{ 
+	throw 1; 
+} 
+void Test2() 
+{ 
+	int* p = new int[10]; 
+	std::thread t(ThreadFunc); 
+	try 
+	{ 
+		Test1(); 
+	} 
+	catch (...) 
+	{ 
+		delete[] p; 
+		throw; 
+	}
+	t.join(); 
+}
+#endif
+#if 0
+unsigned long sum = 0L;
+void func(size_t num)
+{
+	for (int i = 0; i < num; ++i)
+	{
+		sum++;
+	}
+}
+int main()
+{
+	cout << "Before" << sum << endl;
+	thread t1(func, 10000000);
+	thread t2(func, 10000000);
+	t1.join();
+	t2.join();
+	cout << "After" << sum << endl;
+	return 0;
+}
+#endif
+#if 0
+#include <atomic>
+atomic_long sum{ 0L };
+void func(size_t num)
+{
+	for (int i = 0; i < num; ++i)
+	{
+		sum++;
+	}
+}
+int main()
+{
+	cout << "Before" << sum << endl;
+	thread t1(func, 10000000);
+	thread t2(func, 10000000);
+	t1.join();
+	t2.join();
+	cout << "After" << sum << endl;
+	return 0;
+}
+#endif 
+#if 0
+#include <atomic>
+struct Date
+{};
+int main()
+{
+	atomic<Date> t;
+}
+#endif
+#include <mutex>
+mutex m;
+int number = 0;
+int func1()
+{
+	for (int i = 0; i < 100; ++i)
+	{
+		m.lock();
+		number++;
+		cout << "number:" << number << endl;
+		m.unlock();
+	}
+	return 0;
+}
+int func2()
+{
+	for (int i = 0; i < 100; ++i)
+	{
+		m.lock();
+		number--;
+		cout << "number:" << number << endl;
+		m.unlock();
+	}
+	return 0;
+}
+int main()
+{
+	thread t1(func1);
+	thread t2(func2);
+	t1.join();
+	t2.join();
+	cout << number << endl;
+	return 0;
+}
+  
